@@ -1,5 +1,5 @@
 import { Injectable, Inject, Logger, NotFoundException } from '@nestjs/common';
-import { Op} from 'sequelize';
+import { Op } from 'sequelize';
 import { Libro } from '../entities/libro.entity';
 import { CreateLibroDto, UpdateLibroDto } from '../dto';
 import * as ExcelJS from 'exceljs';
@@ -13,7 +13,7 @@ export class LibrosService {
   constructor(
     @Inject('Libro')
     private readonly libroModel: typeof Libro,
-  ) {}
+  ) { }
 
   async create(createLibroDto: CreateLibroDto): Promise<Libro> {
     try {
@@ -28,13 +28,13 @@ export class LibrosService {
   async findAll(
     page: number,
     limit: number,
-    sortOrder: 'ASC' | 'DESC' = 'ASC', 
+    sortOrder: 'ASC' | 'DESC' = 'ASC',
     disponibilidad?: boolean,
-    sortField?: string, 
+    sortField?: string,
     search?: string,
   ): Promise<{ rows: Libro[]; count: number }> {
     try {
-      const where: any = {}; 
+      const where: any = {};
       if (disponibilidad !== undefined) where.disponibilidad = disponibilidad;
       if (search) {
         where[Op.or] = [
@@ -62,14 +62,14 @@ export class LibrosService {
     }
   }
 
-  async findOne(id: number): Promise<Libro|null> {
+  async findOne(id: number): Promise<Libro | null> {
     try {
       const libro = await this.libroModel.findByPk(id, { paranoid: true });
       if (!libro) {
         this.logger.warn(`Libro con ID ${id} no encontrado.`);
         throw new NotFoundException(`Libro con ID ${id} no encontrado`);
       }
-       return libro;
+      return libro;
     } catch (error) {
       this.logger.error(`Error al buscar el libro con ID ${id}: ${error.message}`, error.stack);
       throw error;
@@ -99,10 +99,10 @@ export class LibrosService {
 
   async remove(id: number): Promise<void> {
     try {
-       const libro = await this.findOne(id); // Verificar si existe antes de eliminar
+      const libro = await this.findOne(id); // Verificar si existe antes de eliminar
       if (libro) {
         await this.libroModel.destroy({ where: { id } });
-       } else {
+      } else {
         this.logger.warn(`No se encontró el libro con ID ${id} para eliminar.`);
         throw new NotFoundException(`No se encontró el libro con ID ${id} para eliminar`);
       }
@@ -114,8 +114,7 @@ export class LibrosService {
 
   async exportToExcel(res: Response): Promise<void> {
     try {
-       const librosData = await this.libroModel.findAndCountAll()
-
+      const librosData = await this.libroModel.findAndCountAll({ paranoid: true })
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet('Libros');
 
@@ -129,7 +128,7 @@ export class LibrosService {
       ];
 
       librosData.rows.forEach((libro) => {
-        worksheet.addRow(libro);
+        worksheet.addRow(libro.dataValues);
       });
 
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
