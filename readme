@@ -118,5 +118,3 @@ tp-libros/
 ## Documentación de la API
 
 -   La API está documentada utilizando Swagger en el siguiente link http://localhost:3000/api
--   Se proporciona un diagrama de la arquitectura del sistema.
--   Se incluye un modelo relacional de la base de datos (imagen o dbdiagram.io).
