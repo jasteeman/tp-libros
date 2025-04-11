@@ -53,7 +53,6 @@ export const GestionLibros = () => {
     const filteredParams = Object.fromEntries(
       Object.entries(params).filter(([_, v]) => v !== undefined && v !== '')
     );
-    console.log(filteredParams);
     const parsedQueryString = new URLSearchParams();
     for (const key in filteredParams) {
       if (filteredParams.hasOwnProperty(key) && filteredParams[key] !== undefined) {

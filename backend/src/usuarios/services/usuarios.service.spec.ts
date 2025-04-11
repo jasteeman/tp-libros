@@ -98,6 +98,15 @@ describe('UsuariosService', () => {
       const result = await service.findOneByUsername('test');
       expect(result).toEqual(mockUsuario.dataValues);
     });
+    it('should return null when user is not found by username', async () => {
+      const username = 'nonexistentuser';
+      mockUsuarioModel.findOne.mockResolvedValue(null);
+
+      const result = await service.findOneByUsername(username);
+
+      expect(result).toBeNull();
+      expect(mockUsuarioModel.findOne).toHaveBeenCalledWith({ where: { username } });
+    });
   });
 
   describe('findOneByEmail', () => {
@@ -105,6 +114,15 @@ describe('UsuariosService', () => {
       mockUsuarioModel.findOne.mockResolvedValue(mockUsuario);
       const result = await service.findOneByEmail('test@test.com');
       expect(result).toEqual(mockUsuario.dataValues);
+    });
+    it('should return null when user is not found by email', async () => {
+      const email = 'nonexistent@example.com';
+      mockUsuarioModel.findOne.mockResolvedValue(null);
+
+      const result = await service.findOneByEmail(email);
+
+      expect(result).toBeNull();
+      expect(mockUsuarioModel.findOne).toHaveBeenCalledWith({ where: { email } });
     });
   });
 

@@ -1,18 +1,42 @@
 services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: usuario
+      POSTGRES_PASSWORD: clave123
+      POSTGRES_DB: cmpc_libros
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U usuario -d cmpc_libros"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    env_file:
-      - ./backend/.env
     environment:
-      - NODE_ENV=development
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: usuario
+      DATABASE_PASSWORD: clave123
+      DATABASE_NAME: cmpc_libros
+      JWT_SECRET: secret
+      PORT: 3000
     volumes:
-      - ./backend:/app #eliminado /app/node_modules
+      - ./backend:/app
     networks:
       - app-network
+    depends_on:
+      postgres:
+        condition: service_healthy
   frontend:
     build:
       context: ./frontend
@@ -22,7 +46,7 @@ services:
     env_file:
       - ./frontend/.env.development
     volumes:
-      - ./frontend:/app #eliminado /app/node_modules
+      - ./frontend:/app
     networks:
       - app-network
     depends_on:
@@ -31,3 +55,6 @@ services:
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  postgres-data:

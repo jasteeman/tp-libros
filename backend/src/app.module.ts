@@ -28,7 +28,7 @@ import { Usuario } from './usuarios/entities/usuario.entity';
         models: [Libro, Usuario],
         autoLoadModels: true,
         synchronize: true,
-        logging:true
+        logging:false
       }),
     }),
     UsuariosModule,

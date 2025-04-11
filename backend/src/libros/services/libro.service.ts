@@ -114,7 +114,7 @@ export class LibrosService {
 
   async exportToExcel(res: Response): Promise<void> {
     try {
-       const librosData = await Usuario.findAndCountAll()
+       const librosData = await this.libroModel.findAndCountAll()
 
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet('Libros');
